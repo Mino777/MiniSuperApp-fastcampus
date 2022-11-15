@@ -7,9 +7,9 @@ protocol FinanceHomeDependency: Dependency {
   // created by this RIB.
 }
 
-final class FinanceHomeComponent: Component<FinanceHomeDependency>, SuperPayDashboardDependency, CardOnFileDashboardDependency {
+final class FinanceHomeComponent: Component<FinanceHomeDependency>, SuperPayDashboardDependency, CardOnFileDashboardDependency, AddPaymentMethodDependency {
   // TODO: Declare 'fileprivate' dependencies that are only used by this RIB.
-  let cardsOnFileRepository: CardOnFileRepository
+  var cardOnFileRepository: CardOnFileRepository
   var balance: BehaviorRelay<Double> { balanceRelay }
   private let balanceRelay: BehaviorRelay<Double>
   
@@ -19,7 +19,7 @@ final class FinanceHomeComponent: Component<FinanceHomeDependency>, SuperPayDash
     cardOnFileRepository: CardOnFileRepository
   ) {
     self.balanceRelay = balanceRelay
-    self.cardsOnFileRepository = cardOnFileRepository
+    self.cardOnFileRepository = cardOnFileRepository
     super.init(dependency: dependency)
   }
 }
@@ -49,12 +49,14 @@ final class FinanceHomeBuilder: Builder<FinanceHomeDependency>, FinanceHomeBuild
     
     let superPayDashboardBuilder = SuperPayDashboardBuilder(dependency: component)
     let cardOnFileDashboardBuilder = CardOnFileDashboardBuilder(dependency: component)
+    let addPaymentMethodBuilder = AddPaymentMethodBuilder(dependency: component)
     
     return FinanceHomeRouter(
       interactor: interactor,
       viewController: viewController,
       superPayDashboardBuildable: superPayDashboardBuilder,
-      cardOnFileDashboardBuildable: cardOnFileDashboardBuilder
+      cardOnFileDashboardBuildable: cardOnFileDashboardBuilder,
+      addPaymentMethodBuildable: addPaymentMethodBuilder
     )
   }
 }
