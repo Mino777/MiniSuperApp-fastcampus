@@ -1,5 +1,5 @@
 import UIKit
-import ModernRIBs
+import RIBs
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {

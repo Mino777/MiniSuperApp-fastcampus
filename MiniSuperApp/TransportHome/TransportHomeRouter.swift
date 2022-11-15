@@ -1,4 +1,4 @@
-import ModernRIBs
+import RIBs
 
 protocol TransportHomeInteractable: Interactable {
   var router: TransportHomeRouting? { get set }

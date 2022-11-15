@@ -1,4 +1,4 @@
-import ModernRIBs
+import RIBs
 
 protocol TransportHomeDependency: Dependency {
 }

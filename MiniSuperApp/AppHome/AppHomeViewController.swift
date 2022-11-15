@@ -1,4 +1,4 @@
-import ModernRIBs
+import RIBs
 import UIKit
 
 protocol AppHomePresentableListener: AnyObject {

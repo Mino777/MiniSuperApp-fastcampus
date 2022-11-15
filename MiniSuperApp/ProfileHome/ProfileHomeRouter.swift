@@ -1,4 +1,4 @@
-import ModernRIBs
+import RIBs
 
 protocol ProfileHomeInteractable: Interactable {
   var router: ProfileHomeRouting? { get set }

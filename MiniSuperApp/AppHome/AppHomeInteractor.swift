@@ -1,4 +1,4 @@
-import ModernRIBs
+import RIBs
 
 protocol AppHomeRouting: ViewableRouting {
   func attachTransportHome()

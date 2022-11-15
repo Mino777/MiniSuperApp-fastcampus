@@ -1,13 +1,27 @@
-import ModernRIBs
+import RIBs
+import RxSwift
+import RxRelay
 
 protocol FinanceHomeDependency: Dependency {
   // TODO: Declare the set of dependencies required by this RIB, but cannot be
   // created by this RIB.
 }
 
-final class FinanceHomeComponent: Component<FinanceHomeDependency> {
-  
+final class FinanceHomeComponent: Component<FinanceHomeDependency>, SuperPayDashboardDependency, CardOnFileDashboardDependency {
   // TODO: Declare 'fileprivate' dependencies that are only used by this RIB.
+  let cardsOnFileRepository: CardOnFileRepository
+  var balance: BehaviorRelay<Double> { balanceRelay }
+  private let balanceRelay: BehaviorRelay<Double>
+  
+  init(
+    dependency: FinanceHomeDependency,
+    balanceRelay: BehaviorRelay<Double>,
+    cardOnFileRepository: CardOnFileRepository
+  ) {
+    self.balanceRelay = balanceRelay
+    self.cardsOnFileRepository = cardOnFileRepository
+    super.init(dependency: dependency)
+  }
 }
 
 // MARK: - Builder
@@ -23,10 +37,24 @@ final class FinanceHomeBuilder: Builder<FinanceHomeDependency>, FinanceHomeBuild
   }
   
   func build(withListener listener: FinanceHomeListener) -> FinanceHomeRouting {
-    let _ = FinanceHomeComponent(dependency: dependency)
+    let balanceRelay = BehaviorRelay(value: Double(0))
+    let component = FinanceHomeComponent(
+      dependency: dependency,
+      balanceRelay: balanceRelay,
+      cardOnFileRepository: CardOnFileRepositoryImpl()
+    )
     let viewController = FinanceHomeViewController()
     let interactor = FinanceHomeInteractor(presenter: viewController)
     interactor.listener = listener
-    return FinanceHomeRouter(interactor: interactor, viewController: viewController)
+    
+    let superPayDashboardBuilder = SuperPayDashboardBuilder(dependency: component)
+    let cardOnFileDashboardBuilder = CardOnFileDashboardBuilder(dependency: component)
+    
+    return FinanceHomeRouter(
+      interactor: interactor,
+      viewController: viewController,
+      superPayDashboardBuildable: superPayDashboardBuilder,
+      cardOnFileDashboardBuildable: cardOnFileDashboardBuilder
+    )
   }
 }

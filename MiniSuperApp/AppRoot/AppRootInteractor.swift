@@ -1,5 +1,5 @@
 import Foundation
-import ModernRIBs
+import RIBs
 
 protocol AppRootRouting: ViewableRouting {
   func attachTabs()

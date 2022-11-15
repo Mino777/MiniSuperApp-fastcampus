@@ -1,4 +1,4 @@
-import ModernRIBs
+import RIBs
 
 
 protocol AppHomeInteractable: Interactable, TransportHomeListener {
