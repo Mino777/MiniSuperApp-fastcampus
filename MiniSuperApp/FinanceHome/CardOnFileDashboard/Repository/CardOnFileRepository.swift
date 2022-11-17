@@ -20,7 +20,7 @@ final class CardOnFileRepositoryImpl: CardOnFileRepository {
   
   private let paymentMethodRelay = BehaviorRelay<[PaymentMethodModel]>(
     value: [
-
+      PaymentMethodModel(id: "00", name: "New 카드", digits: "", color: "", isPrimary: false)
     ]
   )
   
