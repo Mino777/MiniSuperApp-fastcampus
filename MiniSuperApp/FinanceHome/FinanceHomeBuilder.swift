@@ -5,24 +5,23 @@ import RxRelay
 protocol FinanceHomeDependency: Dependency {
   // TODO: Declare the set of dependencies required by this RIB, but cannot be
   // created by this RIB.
+  var cardOnFileRepository: CardOnFileRepository { get }
+  var superPayRepository: SuperPayRepository { get }
 }
 
 final class FinanceHomeComponent: Component<FinanceHomeDependency>, SuperPayDashboardDependency, CardOnFileDashboardDependency, AddPaymentMethodDependency, TopupDependency {
   
   // TODO: Declare 'fileprivate' dependencies that are only used by this RIB.
+  
+  var cardOnFileRepository: CardOnFileRepository { dependency.cardOnFileRepository }
+  var superPayRepository: SuperPayRepository { dependency.superPayRepository }
+  var balance: BehaviorRelay<Double> { superPayRepository.balance }
   var topupBaseViewController: ViewControllable
-  var cardOnFileRepository: CardOnFileRepository
-  var balance: BehaviorRelay<Double> { balanceRelay }
-  private let balanceRelay: BehaviorRelay<Double>
   
   init(
     dependency: FinanceHomeDependency,
-    balanceRelay: BehaviorRelay<Double>,
-    cardOnFileRepository: CardOnFileRepository,
     topupBaseViewController: ViewControllable
   ) {
-    self.balanceRelay = balanceRelay
-    self.cardOnFileRepository = cardOnFileRepository
     self.topupBaseViewController = topupBaseViewController
     super.init(dependency: dependency)
   }
@@ -41,14 +40,10 @@ final class FinanceHomeBuilder: Builder<FinanceHomeDependency>, FinanceHomeBuild
   }
   
   func build(withListener listener: FinanceHomeListener) -> FinanceHomeRouting {
-    let balanceRelay = BehaviorRelay(value: Double(0))
-    
     let viewController = FinanceHomeViewController()
     
     let component = FinanceHomeComponent(
       dependency: dependency,
-      balanceRelay: balanceRelay,
-      cardOnFileRepository: CardOnFileRepositoryImpl(),
       topupBaseViewController: viewController
     )
     

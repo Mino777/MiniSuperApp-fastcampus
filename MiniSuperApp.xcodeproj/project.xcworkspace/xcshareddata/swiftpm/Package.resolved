@@ -1,16 +1,32 @@
 {
-  "object": {
-    "pins": [
-      {
-        "package": "ModernRIBs",
-        "repositoryURL": "https://github.com/DevYeom/ModernRIBs",
-        "state": {
-          "branch": null,
-          "revision": "5e0a67365a1fb18ca06b919dbf53608843ddc284",
-          "version": "1.0.1"
-        }
+  "pins" : [
+    {
+      "identity" : "combineext",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/CombineCommunity/CombineExt",
+      "state" : {
+        "revision" : "d7b896fa9ca8b47fa7bcde6b43ef9b70bf8c1f56",
+        "version" : "1.8.1"
       }
-    ]
-  },
-  "version": 1
+    },
+    {
+      "identity" : "ribs",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/uber/RIBs",
+      "state" : {
+        "branch" : "main",
+        "revision" : "2ae19b5c13793b520bee611b46330a18975b3f13"
+      }
+    },
+    {
+      "identity" : "rxswift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ReactiveX/RxSwift",
+      "state" : {
+        "revision" : "b4307ba0b6425c0ba4178e138799946c3da594f8",
+        "version" : "6.5.0"
+      }
+    }
+  ],
+  "version" : 2
 }

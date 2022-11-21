@@ -1,22 +1,27 @@
 import RIBs
 
-public protocol AppHomeDependency: Dependency {
+protocol AppHomeDependency: Dependency {
+  var cardOnFileRepository: CardOnFileRepository { get }
+    var superPayRepository: SuperPayRepository { get }
 }
 
 final class AppHomeComponent: Component<AppHomeDependency>, TransportHomeDependency {
+  var cardOnFileRepository: CardOnFileRepository { dependency.cardOnFileRepository }
+  var superPayRepository: SuperPayRepository { dependency.superPayRepository }
+  
 }
 
 // MARK: - Builder
 // builder는 리블렛 객체들을 생성하는 역할
 // AppHomeBuilder는 App Home 리블렛을 만든다.
 
-public protocol AppHomeBuildable: Buildable {
+protocol AppHomeBuildable: Buildable {
   func build(withListener listener: AppHomeListener) -> ViewableRouting
 }
 
-public final class AppHomeBuilder: Builder<AppHomeDependency>, AppHomeBuildable {
+final class AppHomeBuilder: Builder<AppHomeDependency>, AppHomeBuildable {
   
-  public override init(dependency: AppHomeDependency) {
+  override init(dependency: AppHomeDependency) {
     super.init(dependency: dependency)
   }
   
@@ -24,7 +29,7 @@ public final class AppHomeBuilder: Builder<AppHomeDependency>, AppHomeBuildable 
   // 리블렛에 필요한 객체들을 생성해주는 역할
   // 라우터를 리턴해주는 역할
   // Listenr: 부모 리블렛에게 이벤트를 전달할 때 사용. 익숙하고 단순한 delegate 패턴. 이름만 listenr
-  public func build(withListener listener: AppHomeListener) -> ViewableRouting {
+  func build(withListener listener: AppHomeListener) -> ViewableRouting {
     // component: 로직을 수행하는데 필요한 객체들을 담고있기위한 바구니
     let component = AppHomeComponent(dependency: dependency)
     let viewController = AppHomeViewController()

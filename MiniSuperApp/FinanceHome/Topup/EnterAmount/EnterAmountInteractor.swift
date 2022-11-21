@@ -18,16 +18,20 @@ protocol EnterAmountPresentable: Presentable {
   var listener: EnterAmountPresentableListener? { get set }
   
   func updateSelectedPaymentMethod(with viewModel: SelectedPaymentMethodViewModel)
+  func startLoading()
+  func stopLoading()
 }
 
 protocol EnterAmountListener: AnyObject {
   // TODO: Declare methods the interactor can invoke to communicate with other RIBs.
   func enterAmountDidTapClose()
   func enterAmountDidTapPaymentMethod()
+  func enterAmountDidFinishTopup()
 }
 
 protocol EnterAmountInteractorDependency {
   var selectedPaymentMethod: BehaviorRelay<PaymentMethodModel> { get }
+  var superPayRepository: SuperPayRepository { get }
 }
 
 final class EnterAmountInteractor: PresentableInteractor<EnterAmountPresentable>, EnterAmountInteractable, EnterAmountPresentableListener {
@@ -72,6 +76,16 @@ final class EnterAmountInteractor: PresentableInteractor<EnterAmountPresentable>
   }
   
   func didTapTopup(with amount: Double) {
+    presenter.startLoading()
     
+    dependency.superPayRepository.topup(
+      amount: amount,
+      paymentMethodID: dependency.selectedPaymentMethod.value.id
+    )
+    .observe(on: MainScheduler.instance)
+    .subscribe (onNext: { [weak self] _ in
+      self?.listener?.enterAmountDidFinishTopup()
+      self?.presenter.stopLoading()
+    }).disposed(by: disposeBag)
   }
 }

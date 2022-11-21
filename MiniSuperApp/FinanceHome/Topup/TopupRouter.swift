@@ -58,14 +58,19 @@ final class TopupRouter: Router<TopupInteractable>, TopupRouting {
     }
   }
   
-  func attachAddPaymentMethod() {
+  func attachAddPaymentMethod(closeButtonType: DismissButtonType) {
     if addPaymentMethodRouting != nil {
       return
     }
     
-    let router = addPaymentMethodBuildable.build(withListener: interactor)
+    let router = addPaymentMethodBuildable.build(withListener: interactor, closeButtonType: closeButtonType)
     
-    presentInsideNavigation(router.viewControllable)
+    if let navigationControllable = navigationControllable {
+      navigationControllable.pushViewController(router.viewControllable, animated: true)
+    } else {
+      presentInsideNavigation(router.viewControllable)
+    }
+    
     attachChild(router)
     addPaymentMethodRouting = router
   }
@@ -73,7 +78,7 @@ final class TopupRouter: Router<TopupInteractable>, TopupRouting {
   func detachAddPaymentMethod() {
     guard let router = addPaymentMethodRouting else { return }
     
-    dismissPresentedNavigation(completion: nil)
+    navigationControllable?.popViewController(animated: true)
     detachChild(router)
     addPaymentMethodRouting = nil
   }
@@ -85,7 +90,13 @@ final class TopupRouter: Router<TopupInteractable>, TopupRouting {
     
     let router = enterAmountBuildable.build(withListener: interactor)
     
-    presentInsideNavigation(router.viewControllable)
+    if let navigation = navigationControllable {
+      navigation.setViewControllers([router.viewControllable])
+      resetChildRouting()
+    } else {
+      presentInsideNavigation(router.viewControllable)
+    }
+
     attachChild(router)
     enterAmountRouting = router
   }
@@ -121,6 +132,11 @@ final class TopupRouter: Router<TopupInteractable>, TopupRouting {
     cardOnFileRouting = nil
   }
   
+  func popToRoot() {
+    navigationControllable?.popToRoot(animated: true)
+    resetChildRouting()
+  }
+  
   private func presentInsideNavigation(_ viewControllable: ViewControllable) {
     let navigation = NavigationControllerable(root: viewControllable)
     // 해당 네비게이션은 topupRotuer가 push, pop 할 때 필요함 그래서 프로퍼티로 ㄱ ㄱ
@@ -136,5 +152,17 @@ final class TopupRouter: Router<TopupInteractable>, TopupRouting {
     
     viewController.dismiss(completion: nil)
     self.navigationControllable = nil
+  }
+  
+  private func resetChildRouting() {
+    if let cardOnFileRouting = cardOnFileRouting {
+      detachChild(cardOnFileRouting)
+      self.cardOnFileRouting = nil
+    }
+    
+    if let addPaymentMethodRouting = addPaymentMethodRouting {
+      detachChild(addPaymentMethodRouting)
+      self.addPaymentMethodRouting = nil
+    }
   }
 }
